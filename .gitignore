@@ -5,6 +5,9 @@
 *.ipr
 *.iws
 
+# Ignore the Gradle wrapper jar file
+gradle/wrapper/gradle-wrapper.jar
+
 # IntelliJ
 out/
 # mpeltonen/sbt-idea plugin
