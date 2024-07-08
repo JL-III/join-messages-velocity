@@ -1,9 +1,14 @@
 package com.playtheatria.joinmessagesvelocity;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.event.connection.DisconnectEvent;
+import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
+import net.kyori.adventure.text.Component;
 import org.slf4j.Logger;
 
 @Plugin(
@@ -13,10 +18,38 @@ import org.slf4j.Logger;
 )
 public class Join_messages_velocity {
 
+    private final ProxyServer server;
+    private final Logger logger;
+
     @Inject
-    private Logger logger;
+    public Join_messages_velocity(ProxyServer server, Logger logger) {
+        this.server = server;
+        this.logger = logger;
+    }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+    }
+
+    @Subscribe
+    public void onPostLoginEvent(PostLoginEvent event) {
+        if (event.getPlayer().hasPermission("join-messages-velocity.login.silent")) return;
+        logger.info("{} has joined and was detected by join-messages-velocity", event.getPlayer().getUsername());
+        for (Player player : server.getAllPlayers()) {
+            if (!player.hasPermission("join-messages-velocity.login.ignore")) {
+                player.sendMessage(Component.text("[+] " + event.getPlayer().getUsername()));
+            }
+        }
+    }
+
+    @Subscribe
+    public void onDisconnectEvent(DisconnectEvent event) {
+        if (event.getPlayer().hasPermission("join-messages-velocity.logout.silent")) return;
+        logger.info("{} has disconnected and was detected by join-messages-velocity", event.getPlayer().getUsername());
+        for (Player player : server.getAllPlayers()) {
+            if (!player.hasPermission("join-messages-velocity.logout.ignore")) {
+                player.sendMessage(Component.text("[-] " + event.getPlayer().getUsername()));
+            }
+        }
     }
 }
