@@ -9,7 +9,6 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -23,13 +22,11 @@ import java.util.concurrent.TimeUnit;
 public class Join_messages_velocity {
 
     private final ProxyServer server;
-    private final Logger logger;
     private final List<Player> notifyDisconnectList;
 
     @Inject
-    public Join_messages_velocity(ProxyServer server, Logger logger) {
+    public Join_messages_velocity(ProxyServer server) {
         this.server = server;
-        this.logger = logger;
         this.notifyDisconnectList = new CopyOnWriteArrayList<>();
     }
 
@@ -42,11 +39,13 @@ public class Join_messages_velocity {
                     .buildTask(this, () -> {
                         // abort immediately since the player is no longer online
                         if (!player.isActive()) return;
-                        player.sendMessage(
-                                Component.text("[", NamedTextColor.DARK_GRAY).append(
-                                        Component.text("+", NamedTextColor.GREEN).append(
-                                                Component.text("] ", NamedTextColor.DARK_GRAY).append(
-                                                        Component.text(event.getPlayer().getUsername(), NamedTextColor.DARK_GRAY))))
+                        sendPlayerMessage(
+                                player,
+                                event.getPlayer().getUsername(),
+                                MessageType.CONNECT,
+                                NamedTextColor.DARK_GRAY,
+                                NamedTextColor.GREEN,
+                                NamedTextColor.GRAY
                         );
                         // check if the player has silenced logout messages, if so, there's no need to add them to the disconnect list
                         if (player.hasPermission("join-messages-velocity.logout.silent")) return;
@@ -64,13 +63,31 @@ public class Join_messages_velocity {
 
         for (Player player : server.getAllPlayers()) {
             if (player.hasPermission("join-messages-velocity.logout.ignore")) continue;
-            player.sendMessage(
-                    Component.text("[", NamedTextColor.DARK_GRAY).append(
-                            Component.text("-", NamedTextColor.DARK_AQUA).append(
-                                    Component.text("] ", NamedTextColor.DARK_GRAY).append(
-                                            Component.text(event.getPlayer().getUsername(), NamedTextColor.DARK_GRAY))))
+            sendPlayerMessage(
+                    player,
+                    event.getPlayer().getUsername(),
+                    MessageType.DISCONNECT,
+                    NamedTextColor.DARK_GRAY,
+                    NamedTextColor.DARK_AQUA,
+                    NamedTextColor.GRAY
             );
         }
         notifyDisconnectList.remove(event.getPlayer());
+    }
+
+    private void sendPlayerMessage(
+            Player targetPlayer,
+            String userName,
+            MessageType messageType,
+            NamedTextColor bracketColor,
+            NamedTextColor symbolColor,
+            NamedTextColor userNameColor
+    ) {
+        targetPlayer.sendMessage(
+                Component.text("[", bracketColor).append(
+                        Component.text(messageType.getSymbol(), symbolColor).append(
+                                Component.text("] ", bracketColor).append(
+                                        Component.text(userName, userNameColor))))
+        );
     }
 }
