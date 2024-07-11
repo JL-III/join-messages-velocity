@@ -5,13 +5,27 @@ import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.PluginContainer;
+import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.route.Route;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.slf4j.Logger;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -23,12 +37,37 @@ import java.util.concurrent.TimeUnit;
 public class Join_messages_velocity {
 
     private final ProxyServer server;
+    private final Logger logger;
     private final List<Player> notifyDisconnectList;
+    private static YamlDocument config;
+    private NamedTextColor bracketColor;
 
     @Inject
-    public Join_messages_velocity(ProxyServer server) {
+    public Join_messages_velocity(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
         this.server = server;
+        this.logger = logger;
         this.notifyDisconnectList = new CopyOnWriteArrayList<>();
+
+        try  {
+            config = YamlDocument.create(new File(dataDirectory.toFile(), "config.yml"),
+                    Objects.requireNonNull(getClass().getResourceAsStream("/config.yml")),
+                    GeneralSettings.DEFAULT,
+                    LoaderSettings.builder().setAutoUpdate(true).build(),
+                    DumperSettings.DEFAULT,
+                    UpdaterSettings.builder().setVersioning(new BasicVersioning("file-version"))
+                            .setOptionSorting(UpdaterSettings.OptionSorting.SORT_BY_DEFAULTS).build());
+            config.update();
+            config.save();
+            String bracketColorAsString = config.getString(Route.from("bracket-color"));
+            bracketColor = Color.fromValue(bracketColorAsString);
+        } catch (IOException | IllegalArgumentException ex) {
+            logger.error("Could not create/load plugin config, shutting plugin down!");
+            logger.error(ex.getMessage());
+            Optional<PluginContainer> container = server.getPluginManager().getPlugin("join-messages-velocity");
+            container.ifPresent(pluginContainer -> pluginContainer.getExecutorService().shutdown());
+        }
+
+        logger.info("join-messages-velocity has initialized");
     }
 
     @Subscribe
@@ -44,7 +83,7 @@ public class Join_messages_velocity {
                                 playerToNotify,
                                 event.getPlayer().getUsername(),
                                 MessageType.CONNECT,
-                                NamedTextColor.DARK_GRAY,
+                                bracketColor,
                                 NamedTextColor.GREEN,
                                 NamedTextColor.GRAY
                         );
@@ -68,7 +107,7 @@ public class Join_messages_velocity {
                     player,
                     event.getPlayer().getUsername(),
                     MessageType.DISCONNECT,
-                    NamedTextColor.DARK_GRAY,
+                    bracketColor,
                     NamedTextColor.DARK_AQUA,
                     NamedTextColor.GRAY
             );
