@@ -2,10 +2,20 @@ plugins {
     id 'java'
     id 'eclipse'
     id "org.jetbrains.gradle.plugin.idea-ext" version "1.0.1"
+    id 'com.gradleup.shadow' version '8.3.0'
 }
 
 group = 'com.playtheatria'
 version = '1.0-SNAPSHOT'
+
+shadowJar {
+    archiveClassifier.set('')
+    relocate("net.dv8tion", "com.playtheatria.joinmessagesvelocity.shaded.dv8tion")
+}
+
+tasks.build {
+    dependsOn shadowJar
+}
 
 repositories {
     mavenCentral()
@@ -16,8 +26,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.velocitypowered:velocity-api:3.3.0-SNAPSHOT"
-    annotationProcessor "com.velocitypowered:velocity-api:3.3.0-SNAPSHOT"
+    compileOnly "com.velocitypowered:velocity-api:3.4.0-SNAPSHOT"
+    annotationProcessor "com.velocitypowered:velocity-api:3.4.0-SNAPSHOT"
+    implementation("net.dv8tion:JDA:$jda_version")
 }
 
 def targetJavaVersion = 17
