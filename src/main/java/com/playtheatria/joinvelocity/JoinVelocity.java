@@ -125,7 +125,7 @@ public class JoinVelocity {
 
     @Subscribe
     public void onConnectProcessDiscord(ServerConnectedEvent event) {
-        if (event.getPlayer().hasPermission(config.getSilentServerLoginPermission())) return;
+        if (event.getPlayer().hasPermission(config.getSilentDiscordLoginPermission())) return;
         String server = event.getServer().getServerInfo().getName();
 
         String username = event.getPlayer().getUsername();
@@ -142,7 +142,7 @@ public class JoinVelocity {
 
     @Subscribe
     public void onDisconnectProcessDiscord(DisconnectEvent event) {
-        if (event.getPlayer().hasPermission(config.getSilentServerLogoutPermission())) return;
+        if (event.getPlayer().hasPermission(config.getSilentDiscordLogoutPermission())) return;
         Optional<ServerConnection> serverConnection = event.getPlayer().getCurrentServer();
         String username = event.getPlayer().getUsername();
 
