@@ -1,7 +1,7 @@
-package com.playtheatria.joinmessagesvelocity;
+package com.playtheatria.joinvelocity.discord;
 
-import com.playtheatria.joinmessagesvelocity.config.Config;
-import com.playtheatria.joinmessagesvelocity.utils.StringTemplate;
+import com.playtheatria.joinvelocity.config.Config;
+import com.playtheatria.joinvelocity.utils.StringTemplate;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -48,18 +48,13 @@ public class Discord extends ListenerAdapter {
                 .addEventListeners(this);
         try {
             jda = builder.build();
-            logger.info("jda token: " + jda.getToken());
+            logger.info(String.format("jda token: %s", jda.getToken()));
         } catch (Exception e) {
             this.logger.error("Failed to login to discord: {}", e.getMessage());
         }
     }
 
-    public void shutdown() {
-        jda.shutdown();
-    }
-
     // region JDA events
-
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
         logger.info(MessageFormat.format(

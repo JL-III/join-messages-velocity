@@ -1,6 +1,6 @@
-package com.playtheatria.joinmessagesvelocity.config;
+package com.playtheatria.joinvelocity.config;
 
-import com.playtheatria.joinmessagesvelocity.enums.Color;
+import com.playtheatria.joinvelocity.enums.Color;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.slf4j.Logger;
 
@@ -16,10 +16,13 @@ public class Config {
     private final Logger logger;
     private String token;
     private String bracketColor;
-    private final String silentLoginPermission = "join-messages-velocity.login.silent";
-    private final String silentLogoutPermission = "join-messages-velocity.logout.silent";
-    private final String loginIgnorePermission = "join-messages-velocity.login.ignore";
-    private final String logoutIgnorePermission = "join-messages-velocity.logout.ignore";
+    private final String adminPermission = "join-velocity.admin";
+    private final String silentServerLoginPermission = "join-velocity.server.login.silent";
+    private final String silentServerLogoutPermission = "join-velocity.server.logout.silent";
+    private final String silentDiscordLoginPermission = "join-velocity.discord.login.silent";
+    private final String silentDiscordLogoutPermission = "join-velocity.discord.logout.silent";
+    private final String loginIgnorePermission = "join-velocity.server.login.ignore";
+    private final String logoutIgnorePermission = "join-velocity.server.logout.ignore";
 
     public Config(Path configPath, Logger logger) {
         this.configPath = configPath;
@@ -32,6 +35,10 @@ public class Config {
     }
 
     public NamedTextColor getBracketColor() { return Color.fromValue(bracketColor); }
+
+    public void reloadConfig() {
+        loadConfig();
+    }
 
     private void loadConfig() {
         try {
@@ -66,12 +73,16 @@ public class Config {
         return properties.getProperty(key);
     }
 
-    public String getSilentLoginPermission() {
-        return silentLoginPermission;
+    public String getAdminPermission() {
+        return adminPermission;
     }
 
-    public String getSilentLogoutPermission() {
-        return silentLogoutPermission;
+    public String getSilentServerLoginPermission() {
+        return silentServerLoginPermission;
+    }
+
+    public String getSilentServerLogoutPermission() {
+        return silentServerLogoutPermission;
     }
 
     public String getLoginIgnorePermission() {
@@ -80,5 +91,13 @@ public class Config {
 
     public String getLogoutIgnorePermission() {
         return logoutIgnorePermission;
+    }
+
+    public String getSilentDiscordLoginPermission() {
+        return silentDiscordLoginPermission;
+    }
+
+    public String getSilentDiscordLogoutPermission() {
+        return silentDiscordLogoutPermission;
     }
 }

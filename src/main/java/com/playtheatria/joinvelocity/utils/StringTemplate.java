@@ -1,4 +1,4 @@
-package com.playtheatria.joinmessagesvelocity.utils;
+package com.playtheatria.joinvelocity.utils;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

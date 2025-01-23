@@ -10,7 +10,7 @@ version = '1.0-SNAPSHOT'
 
 shadowJar {
     archiveClassifier.set('')
-    relocate("net.dv8tion", "com.playtheatria.joinmessagesvelocity.shaded.dv8tion")
+    relocate("net.dv8tion", "com.playtheatria.joinvelocity.shaded.dv8tion")
 }
 
 tasks.build {

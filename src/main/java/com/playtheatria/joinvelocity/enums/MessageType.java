@@ -1,4 +1,4 @@
-package com.playtheatria.joinmessagesvelocity.enums;
+package com.playtheatria.joinvelocity.enums;
 
 public enum MessageType {
     CONNECT("+"),
