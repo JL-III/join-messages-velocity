@@ -17,7 +17,6 @@ public class Config {
     private String token;
     private String bracketColor;
     private final String adminPermission = "join-velocity.admin";
-    private final String whitelistPermission = "join-velocity.whitelist";
     private final String silentServerLoginPermission = "join-velocity.server.login.silent";
     private final String silentServerLogoutPermission = "join-velocity.server.logout.silent";
     private final String silentDiscordLoginPermission = "join-velocity.discord.login.silent";
@@ -77,8 +76,6 @@ public class Config {
     public String getAdminPermission() {
         return adminPermission;
     }
-
-    public String getWhitelistPermission() { return whitelistPermission; }
 
     public String getSilentServerLoginPermission() {
         return silentServerLoginPermission;
