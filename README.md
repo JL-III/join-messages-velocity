@@ -1,4 +1,4 @@
-# theatria-join-velocity
+# join-velocity
 ### Handles:  
 - Whitelist checks against permissions  
 - Discord notifications  

@@ -9,6 +9,7 @@ import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
+import com.velocitypowered.api.event.connection.PreLoginEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -67,6 +68,10 @@ public class JoinVelocity {
 
     @Subscribe
     public void onPostLoginEvent(PostLoginEvent event) {
+        if (!event.getPlayer().hasPermission(config.getWhitelistPermission())) {
+            event.getPlayer().disconnect(Component.text("You must be whitelisted to play on Theatria, open an application on discord! https://docs.playtheatria.com"));
+            return;
+        }
         if (event.getPlayer().hasPermission(config.getSilentServerLoginPermission())) {
             logger.info(String.format("Player: %s had %s skipping login message!", event.getPlayer().getUsername(), config.getSilentServerLoginPermission()));
             return;
@@ -120,7 +125,7 @@ public class JoinVelocity {
 
     @Subscribe
     public void onConnectProcessDiscord(ServerConnectedEvent event) {
-        if (event.getPlayer().hasPermission(config.getSilentServerLoginPermission())) return;
+        if (event.getPlayer().hasPermission(config.getSilentDiscordLoginPermission())) return;
         String server = event.getServer().getServerInfo().getName();
 
         String username = event.getPlayer().getUsername();
@@ -137,7 +142,7 @@ public class JoinVelocity {
 
     @Subscribe
     public void onDisconnectProcessDiscord(DisconnectEvent event) {
-        if (event.getPlayer().hasPermission(config.getSilentServerLogoutPermission())) return;
+        if (event.getPlayer().hasPermission(config.getSilentDiscordLogoutPermission())) return;
         Optional<ServerConnection> serverConnection = event.getPlayer().getCurrentServer();
         String username = event.getPlayer().getUsername();
 
