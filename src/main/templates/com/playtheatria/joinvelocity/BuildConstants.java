@@ -1,4 +1,4 @@
-package com.playtheatria.joinmessagesvelocity;
+package com.playtheatria.joinvelocity;
 
 // The constants are replaced before compilation
 public class BuildConstants {

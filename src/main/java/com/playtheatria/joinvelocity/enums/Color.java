@@ -1,4 +1,4 @@
-package com.playtheatria.joinmessagesvelocity.enums;
+package com.playtheatria.joinvelocity.enums;
 
 import net.kyori.adventure.text.format.NamedTextColor;
 
